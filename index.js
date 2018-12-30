@@ -7,15 +7,31 @@ Array.prototype.shuffle = function () {
   })
   return this;
 }
-let cards = Array(13).fill().reduce((prev, _, i) => [...prev, i, i, i, i], []).shuffle()
+const getValue = strength => {
+  if (strength === 12) return 'As'
+  if (strength === 11) return 'King'
+  if (strength === 10) return 'Queen'
+  if (strength === 9) return 'Valet'
+  if (strength < 10) return (strength + 2).toString()
+}
+let cards = Array(13)
+  .fill().reduce((prev, _, i) => [
+    ...prev,
+    {strength: i, value: getValue(i), color: 'Heart'},
+    {strength: i, value: getValue(i), color: 'Tile'},
+    {strength: i, value: getValue(i), color: 'Clover'},
+    {strength: i, value: getValue(i), color: 'Pike'}
+  ], []).shuffle()
 const distribute = cards => ([cards.slice(0, cards.length / 2), cards.slice(cards.length / 2, cards.length)])
 const pickCards = (deck1, deck2) => ([deck1.shift(), deck2.shift()])
 const whoWin = (deck1, deck2) => {
   if (!deck1.length) return [1, [], 0]
   if (!deck2.length) return [2, [], 0]
   const [card1, card2] = pickCards(deck1, deck2)
-  if (card1 > card2) return [1, [card1, card2].shuffle(), 0]
-  else if (card1 < card2) return [2, [card1, card2].shuffle(), 0]
+  if (!card1) return [1, [], 0]
+  if (!card2) return [2, [], 0]
+  if (card1.strength > card2.strength) return [1, [card1, card2].shuffle(), 0]
+  else if (card1.strength < card2.strength) return [2, [card1, card2].shuffle(), 0]
   else {
     const [temp1, temp2] = pickCards(deck1, deck2)
     const winner = whoWin(deck1, deck2)
