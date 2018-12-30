@@ -47,7 +47,7 @@ const launchGame = (cards, verbose) => {
   }
 }
 ;(async _ => {
-  const nbGame = process.env.nbTurn || 1
+  const nbGame = +process.env.nbTurn || 1000
   const promises = Array(nbGame).fill().map(_ => launchGame(cards, nbGame === 1 ? true : false))
   const stats = await Promise.map(promises, res=> res, {concurrency: 5})
   stats.nbGame = nbGame
